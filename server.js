@@ -34,5 +34,6 @@ app.get("/ai", (req, res) => {
   const humanReadable = interpretSentiment(result);
   res.send({ rating: humanReadable, score: result });
 });
+const port = process.env.PORT || 8080;
 
-app.listen(8080, () => console.log("Listening"));
+app.listen(port, () => console.log("Listening"));
