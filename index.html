@@ -5,11 +5,29 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Page Title</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-  <script src='main.js'></script>
+  <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+  <!-- <script src='main.js'></script> -->
 </head>
 <body>
-  <input type="text"></input>
-  <button>Analyze</button>
+  <input id="output" type="text"></input>
+  <button onclick="get()">Analyze</button>
+  <div id="demo">Waiting for Response</div>
 </body>
+<script>
+  const xhttp = new XMLHttpRequest();
+  const endPointRoot = "http://localhost:8888/ai";
+  function get() {
+    const output = document.getElementById("output").value;
+    const url = endPointRoot;
+    xhttp.open("POST", url, true);
+    xhttp.send(output);
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        let parsedData = JSON.parse(this.responseText);
+        document.getElementById("demo").innerHTML =
+          `Response: <p>Rating:${parsedData.rating}</p><p>Score: ${parsedData.score}</p>`;
+      }
+    };
+  }
+</script>
 </html>

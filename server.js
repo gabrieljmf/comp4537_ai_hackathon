@@ -22,18 +22,41 @@ function interpretSentiment(score) {
   return "Strongly Negative";
 }
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Content-Length, X-Request-With"
+  );
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("hi");
 });
 
-app.get("/ai", (req, res) => {
-  if (!req.query.text) {
-    res.send("Please enter something");
-  }
-  const result = analyzer.getSentiment(req.query.text.split(" "));
-  const humanReadable = interpretSentiment(result);
-  res.send({ rating: humanReadable, score: result });
+app.post("/ai", (req, res) => {
+  let body = "";
+  req.on("data", (chunk) => {
+    body += chunk;
+  });
+  req.on("end", () => {
+    console.log(body);
+    if (!body) {
+      res.end("Please enter something");
+    }
+    const result = analyzer.getSentiment(body.split(" "));
+    const humanReadable = interpretSentiment(result);
+    const data = { rating: humanReadable, score: result };
+    // res.end({ rating: humanReadable, score: result });
+    console.log(data);
+    res.end(JSON.stringify(data));
+  });
 });
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8888;
 
 app.listen(port, () => console.log("Listening"));
